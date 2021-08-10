@@ -1,10 +1,13 @@
 #Importando las librerias
-#install 
+#esta libreria es la encargada de crear el pdf
 from fpdf import FPDF
+#Esta es una libreria que pertenece al python
 import tkinter as tk
+#Esta libreria abre los hipervinculos
 import webbrowser,os
 #Importando clases
-from tkinter import Label, Menu, PhotoImage, messagebox,ttk,Scrollbar
+from tkinter import Label,Menu, PhotoImage, messagebox,ttk,Scrollbar
+#para cuadrarlo
 from tkinter.constants import ANCHOR, BOTH, BOTTOM, CENTER, E, LEFT, N, NSEW, RIGHT, S, W
 #Creando las variables de datos
 emisor= []
@@ -16,16 +19,18 @@ estado=[]
 i=0
 #Creando Ventana
 ventana = tk.Tk()
+#Las dimensiones de la ventana
 ventana.geometry("1080x640")
+#Para que no se escale
 ventana.resizable(0,0)
+#Titulo a la ventana
 ventana.title("QROMA | CONTROL DE MANTENIMIENTO - ÑAÑA")
 #Poniendo Icono
 ventana.iconbitmap('img/qroma.ico')
 #Crear menu
 menubar = Menu(ventana)
+#Le pone el color
 ventana.config(menu=menubar,bg="#0070BA")
-#Submenus  
-
 #filemenu
 filemenu = Menu(menubar, tearoff=0)
 filemenu.add_command(label="Mostrar OT",command=lambda:abrirCarpeta())
@@ -37,10 +42,6 @@ helpmenu.add_command(label="Acerca de..." , command=lambda:abrirPagina())
 #Mostrar
 menubar.add_cascade(label="Archivo", menu=filemenu)
 menubar.add_cascade(label="Ayuda", menu=helpmenu)
-
-
-
-
 
 #Creando Frames FORMULARIOS
 #Formulario Title
@@ -123,9 +124,9 @@ def crearOT():
             pdf.cell(40,7,enEpp.get(),ln=1)
             pdf.cell(30)
             pdf.set_font('Arial', 'B', 9)
-            pdf.cell(50,7,"Presupuestos:")
+            pdf.cell(50,7,"Tecnico asignado:")
             pdf.set_font('Arial','', 9)
-            pdf.cell(40,7,enRepuesto.get(),ln=1)
+            pdf.cell(40,7,enTecnicoAsig.get(),ln=1)
             pdf.cell(30)
             pdf.cell(130,5,"Descripcion del trabajo",border=1,align='C',ln=2,)
             pdf.cell(130,14,descripcion[i],border=1,ln=2)
@@ -135,8 +136,11 @@ def crearOT():
             pdf.set_y(15)
             pdf.set_font('Arial', 'I', 8)
             pdf.cell(0, 10, 'Pagina ' + str(pdf.page_no()), 0, 0, 'C')
+            # Crea el pdf y lo guarda en la carpeta OT con el nobmre OT_01,OT_02,OT_03....etc
             pdf.output('OT/OT_0'+str(i)+'.pdf')
+            #Cambia el estado de solicitud a OT
             estado[i]="OT"
+            #Agrega la informacion al cuadro
             tree.insert("",i,text=("N°  "+ str(i)),values=(emisor[i],area[i],descripcion[i],prioridad[i],estado[i]))
             tree.delete(elemento)
             messagebox.showinfo("Aviso","Orden de Trabajo creada con éxito")
@@ -145,12 +149,15 @@ def crearOT():
 def abrirPagina():
     webbrowser.open_new("https://www.qroma.com.pe/nosotros/")
 def agregar():
+    #Utiliza la variable global i
     global i
+    #agregamos los valores a las listas
     emisor.append(enEmisor.get())
     area.append(cbArea.get())
     descripcion.append(enDescripcion.get())
     prioridad.append(cbPrioridad.get())
     estado.append("Solicitud")
+    #Se agreaga a el arbol de abajo
     tree.insert("",i,text=("N°  "+ str(i)),values=(emisor[i],area[i],descripcion[i],prioridad[i],estado[i]))
     i=i+1
     limpiar()
@@ -203,10 +210,9 @@ def comprobar():
             messagebox.showinfo("Aviso","Se ha registrado correctamente")
             agregar()
     else:
-        print()
         messagebox.showwarning("Aviso", "Por favor complete todos los campos de forma correcta")
-
 #Fin Funciones-------------------------------------------------------------------------------------------
+
 #Elementos del formTitle
 lblTitle=tk.Label(formTitle,text="CORPORACION PERUANA DE PRODUCTOS QUIMICOS S.A.")
 lblTitle.config(bg="#0070BA",fg="#FFFFFF",font=("Bahnschrift SemiBold",14))
@@ -215,6 +221,9 @@ imgLogo=PhotoImage(file="img/logo.jpg")
 lblImagen=tk.Label(ventana,image=imgLogo)
 lblImagen.config(bg="#0070BA")
 lblImagen.grid(row=0,column=0,sticky=W)
+
+
+
 #Elementos del formSolicitud
 lbl=tk.Label(formSolicitud, text="SOLICITUDES DE MANTENIMIENTO")
 lbl.config(bg="#0070BA",fg="#FFFFFF",font=("Bahnschrift SemiBold SemiConden",12))
@@ -250,8 +259,10 @@ cbPrioridad.grid(row=4,column=1,sticky=W)
 #Boton registrar
 btnRegistrar=tk.Button(formSolicitud,text="Registrar solicitud",command=lambda:comprobar())
 btnRegistrar.grid(row=5,column=1,sticky=NSEW)
+#Boton Editar
 btnEditar=tk.Button(formSolicitud,text="Editar Solicitud",command=lambda:editar())
 btnEditar.grid(row=6,column=1,sticky=NSEW)
+#Boton Eliminar
 btnEliminar=tk.Button(formSolicitud,text="Eliminar Solicitud",command=lambda:eliminar())
 btnEliminar.grid(row=7,column=1,sticky=NSEW)
 
@@ -272,9 +283,9 @@ lblRepuesto.grid(row=3,column=0,sticky=W)
 lblTiempo=tk.Label(formPlanner,text="Tiempo estimado: ")
 lblTiempo.config(bg="#0070BA",fg="#FFFFFF")
 lblTiempo.grid(row=4,column=0,sticky=W)
-lblPresupuesto=tk.Label(formPlanner,text="Presupuesto: ")
-lblPresupuesto.config(bg="#0070BA",fg="#FFFFFF")
-lblPresupuesto.grid(row=5,column=0,sticky=W)
+lblTecnicoAsig=tk.Label(formPlanner,text="Tecnico Asignado: ")
+lblTecnicoAsig.config(bg="#0070BA",fg="#FFFFFF")
+lblTecnicoAsig.grid(row=5,column=0,sticky=W)
 #Form Planner Editar
 cbEquipo=ttk.Combobox(formPlanner,state="readonly")
 cbEquipo['values']=('Equipo A','Equipo B','Equipo C','Equipo D')
@@ -285,11 +296,11 @@ enRepuesto=tk.Entry(formPlanner)
 enRepuesto.grid(row=3,column=1,sticky=W)
 enTiempo=tk.Entry(formPlanner)
 enTiempo.grid(row=4,column=1,sticky=W)
-enRepuesto=tk.Entry(formPlanner)
-enRepuesto.grid(row=5,column=1,sticky=W)
+enTecnicoAsig=tk.Entry(formPlanner)
+enTecnicoAsig.grid(row=5,column=1,sticky=W)
 
 #Elementos FormOT
-lblOt=tk.Label(formOt,text="GENERACION DE OT")
+lblOt=tk.Label(formOt,text="REPORTE DE OT")
 lblOt.config(bg="#0070BA",fg="#FFFFFF",font=("Bahnschrift SemiBold SemiConden",12))
 lblOt.grid(row=0,column=1,pady=20)
 lblTecnico=tk.Label(formOt,text="Tecnico: ")
@@ -333,4 +344,5 @@ tree.heading('#5',text="Estado",anchor=CENTER)
 #Creando Scrollbar
 scrollbar.grid(row=0,column=1,sticky=E)
 scrollbar.config(command=tree.yview)
+#Permite que se cicle a la vista
 ventana.mainloop()
